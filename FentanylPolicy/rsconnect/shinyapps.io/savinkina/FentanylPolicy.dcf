@@ -1,0 +1,13 @@
+name: FentanylPolicy
+title: FentanylPolicy
+username:
+account: savinkina
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6762102
+bundleId: 6211934
+url: https://savinkina.shinyapps.io/FentanylPolicy/
+when: 1660773341.23993
+lastSyncTime: 1660773341.23994
+asMultiple: FALSE
+asStatic: FALSE
