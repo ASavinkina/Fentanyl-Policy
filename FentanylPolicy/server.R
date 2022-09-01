@@ -7,62 +7,18 @@
 #    http://shiny.rstudio.com/
 #
 
-library(shiny)
-library(shinydashboard)
+
 
 input_element_color <- "primary" 
 highlight_color <- "navy" 
 regular_color <- "navy"
 
-# Define server logic required to draw a histogram
 shinyServer(function(input, output) {
   
   output$I_plot <- renderPlot({
     
-    ############# Multiple plot function ###################
-    ## http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/ ##
-    
-    # multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
-    #     library(grid)
-    #     
-    #     # Make a list from the ... arguments and plotlist
-    #     plots <- c(list(...), plotlist)
-    #     
-    #     numPlots = length(plots)
-    #     
-    #     # If layout is NULL, then use 'cols' to determine layout
-    #     if (is.null(layout)) {
-    #         # Make the panel
-    #         # ncol: Number of columns of plots
-    #         # nrow: Number of rows needed, calculated from # of cols
-    #         layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
-    #                          ncol = cols, nrow = ceiling(numPlots/cols))
-    #     }
-    #     
-    #     if (numPlots==1) {
-    #         print(plots[[1]])
-    #         
-    #     } else {
-    #         # Set up the page
-    #         grid.newpage()
-    #         pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
-    #         
-    #         # Make each plot, in the correct location
-    #         for (i in 1:numPlots) {
-    #             # Get the i,j matrix positions of the regions that contain this subplot
-    #             matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
-    #             
-    #             print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
-    #                                             layout.pos.col = matchidx$col))
-    #         }
-    #     }
-    # }
-    
-    
-    # Fentanyl policy project
-    
-    # install.packages("markovchain")
-    #  install.packages("diagram")
+    library(shiny)
+    library(shinydashboard)
     library(markovchain)
     library(diagram)
     library(ggplot2)
@@ -80,16 +36,15 @@ shinyServer(function(input, output) {
     Prop_Incid <- 1-input$PropIncid 
     Prop_Reg <- input$PropIncid 
     
-    PropHighIncid <- 0.1
-    PropMedIncid <- 0.3
-    PropLowIncid <- 0.6
+    PropHighIncid <- 0.03
+    PropMedIncid <- 0.54
+    PropLowIncid <- 0.43
     
-    PropHighReg <- 0.3
-    PropMedReg <- 0.5
-    PropLowReg <- 0.2
+    PropHighReg <- 0.36
+    PropMedReg <- 0.43
+    PropLowReg <- 0.21
     
     PropFentanyl <- input$propFentanyl
-    
     
     
     Prop_AtRisk_Incid <- ifelse(atRisk==1, Prop_Incid*PropHighIncid,
@@ -138,6 +93,7 @@ shinyServer(function(input, output) {
     drug_use_pop_state <- read.csv(file="drugusestate.csv")
     
     N_pop1 <- (as.numeric(drug_use_pop_state[which(drug_use_pop_state$State==input$costarrest),4]))
+    
     N_pop <- (as.numeric(drug_use_pop_state[which(drug_use_pop_state$State==input$costarrest),4]))*PropFentanyl
     
     # Model parameters
@@ -221,29 +177,32 @@ shinyServer(function(input, output) {
     Data_Cost_Long <- Data_Long2[which((Data_Long2$observation=="ChargeCostCum"|Data_Long2$observation=="DeathCost") & Data_Long2$month==steps),]
     
     # 
-    #output$Table <- renderTable(Data_People)
     
     time= as.numeric(input$timeframe)*12
     
-    Deaths_incid <- trunc(Data_People[Data_People$month==time,'Dead_incid'])
-    Arrests_incid <- trunc(Data_People[Data_People$month==time,'Arrested_incid']) + 
-      trunc(Data_People[Data_People$month==time,'Released_immediate_incid'])+ 
-      trunc(Data_People[Data_People$month==time,'Released_post1yr_incid'])
+    #Deaths_incid <- trunc(Data_People[Data_People$month==time,'Dead_incid'])
+   
+    # 
+    # Arrests_incid <- trunc(Data_People[Data_People$month==time,'Arrested_incid']) + 
+    #   trunc(Data_People[Data_People$month==time,'Released_immediate_incid'])+ 
+    #   trunc(Data_People[Data_People$month==time,'Released_post1yr_incid']) 
     
-    Deaths_reg <- trunc(Data_People[Data_People$month==time,'Dead_reg'])
-    Arrests_reg <- trunc(Data_People[Data_People$month==time,'Arrested_reg']) + 
-      trunc(Data_People[Data_People$month==time,'Released_immediate_reg'])+ 
-      trunc(Data_People[Data_People$month==time,'Released_post1yr_reg'])
+   # Deaths_reg <- trunc(Data_People[Data_People$month==time,'Dead_reg'])
+                                     
+    
+    # Arrests_reg <- trunc(Data_People[Data_People$month==time,'Arrested_reg']) + 
+    #   trunc(Data_People[Data_People$month==time,'Released_immediate_reg'])+ 
+    #   trunc(Data_People[Data_People$month==time,'Released_post1yr_reg']) 
     
     Costs_death <-trunc(Data_People[Data_People$month==time,'DeathCost'])
     
     Costs_arrest <- trunc(Data_People[Data_People$month==time,'ChargeCostCum'])
     
-    Costs_total <- format_dollars(Costs_arrest+Costs_death)
+   # Costs_total <- format_dollars(Costs_arrest+Costs_death)
     
-    Costs_arrest <- format_dollars(Costs_arrest)
+    # Costs_arrest <- format_dollars(Costs_arrest)
     
-    Costs_death <- format_dollars(Costs_death)
+   # Costs_death <- format_dollars(Costs_death)
     
     
     output$StateText<- renderText({ 
@@ -252,52 +211,58 @@ shinyServer(function(input, output) {
             Arrest_text1, "leads to an annual arrest rate of", Arrest_text2)
     })
     
-    output$Deaths_incid <- renderValueBox({
-      valueBox(prettyNum(Deaths_incid, big.mark = ","), "Arrests in population with unknown fentanyl possession",
-               icon = icon("skull"),
+    
+    output$Deaths1 <- renderValueBox({
+      valueBox(prettyNum((trunc(Data_People[Data_People$month==time,'Dead_incid'])), big.mark = ","), "Deaths in population with unknown fentanyl possession",
+               #icon = icon("skull"),
                color = "red")
     })
-    
-    output$Deaths_reg <- renderValueBox({
-      valueBox(prettyNum(Deaths_reg, big.mark = ","), "Deaths in population with known fentanyl possession",
-               icon = icon("skull"), 
+
+    output$Death2 <- renderValueBox({
+      valueBox(prettyNum((trunc(Data_People[Data_People$month==time,'Dead_reg'])), big.mark = ","), "Deaths in population with known fentanyl possession",
+               #icon = icon("skull"),
                color = "red")
     })
-    
-    output$Arrests_incid <- renderValueBox({
-      valueBox(prettyNum(Arrests_incid, big.mark = ","), "Arrests in population with unknown fentanyl possession",
-               icon = icon("trailer"),
+
+    output$Arrests1 <- renderValueBox({
+      valueBox(prettyNum((trunc(Data_People[Data_People$month==time,'Arrested_incid']) + 
+                            trunc(Data_People[Data_People$month==time,'Released_immediate_incid'])+ 
+                            trunc(Data_People[Data_People$month==time,'Released_post1yr_incid'])), big.mark = ","), "Arrests in population with unknown fentanyl possession",
+               #icon = icon("trailer"),
                color = "orange")
     })
-    
-    output$Arrests_reg <- renderValueBox({
-      valueBox(prettyNum(Arrests_reg, big.mark = ","), "Arrests in population with known fentanyl possession",
-               icon = icon("trailer"),
+
+    output$Arrest2 <- renderValueBox({
+      valueBox(prettyNum(trunc(Data_People[Data_People$month==time,'Arrested_reg']) + 
+                            trunc(Data_People[Data_People$month==time,'Released_immediate_reg'])+ 
+                            trunc(Data_People[Data_People$month==time,'Released_post1yr_reg']), big.mark = ","), "Arrests in population with known fentanyl possession",
+               #icon = icon("trailer"),
                color = "orange")
     })
-    
-    output$Costs_total <- renderValueBox({
-      valueBox(Costs_total, "Total costs from death and arrest",
-               icon = icon("dollar"),
+
+    output$TotalCosts <- renderValueBox({
+      valueBox(format_dollars(Costs_arrest+Costs_death), "Total costs from death and arrest",
+               #icon = icon("dollar"),
                color = "green")
     })
-    
-    output$Costs_death <- renderValueBox({
-      valueBox(Costs_death, "Total costs from death",
-               icon = icon("dollar"),
+
+    output$Costs2 <- renderValueBox({
+      valueBox(format_dollars(Costs_death), "Total costs from death",
+               #icon = icon("dollar"),
                color = "green")
     })
-    
-    
-    output$Costs_arrest <- renderValueBox({
-      valueBox(Costs_arrest, "Total costs from arrest",
-               icon = icon("dollar"),
+
+
+    output$Costs3 <- renderValueBox({
+      valueBox(format_dollars(Costs_arrest), "Total costs from arrest",
+               #icon = icon("dollar"),
                color = "green")
     })
-    
+
     
     
     
   })
-})
+}
+)
 
