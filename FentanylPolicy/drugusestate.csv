@@ -1,53 +1,53 @@
-﻿State,Adult Estimate illicit use,US Population adult,US pop using illicit drugs in the last month
-US Average,0.04,"255,200,373",9008573
-Alabama,0.03,"3,814,879",132376
-Alaska,0.05,"551,562",24931
-Arizona,0.04,"5,638,481",229486
-Arkansas,0.03,"2,317,649",77409
-California,0.04,"30,617,582",1249197
-Colorado,0.04,"4,499,217",196616
-Connecticut,0.04,"2,837,847",105284
-Delaware,0.04,"770,192",28112
-District of Columbia,0.06,"577,581",34713
-Florida,0.03,"17,247,808",548480
-Georgia,0.03,"8,113,542",259633
-Hawaii,0.03,"1,116,004",33815
-Idaho,0.03,"1,338,864",40568
-Illinois,0.03,"9,853,946",337990
-Indiana,0.03,"5,164,245",166289
-Iowa,0.03,"2,428,229",72847
-Kansas,0.04,"2,213,064",86752
-Kentucky,0.03,"3,464,802",98400
-Louisiana,0.04,"3,561,164",145295
-Maine,0.03,"1,095,370",35380
-Maryland,0.03,"4,710,993",147925
-Massachusetts,0.04,"5,539,703",247071
-Michigan,0.04,"7,842,924",279992
-Minnesota,0.03,"4,336,475",121855
-Mississippi,0.03,"2,277,566",78576
-Missouri,0.03,"4,766,843",153016
-Montana,0.03,"840,190",27558
-Nebraska,0.03,"1,458,334",44042
-Nevada,0.05,"2,387,517",114362
-New Hampshire,0.03,"1,104,458",37331
-New Jersey,0.03,"6,943,612",211086
-New Mexico,0.04,"1,620,991",60787
-New York,0.04,"15,425,262",598500
-North Carolina,0.03,"8,187,369",264452
-North Dakota,0.03,"581,891",18562
-Ohio,0.03,"9,111,081",302488
-Oklahoma,0.03,"3,004,733",98555
-Oregon,0.04,"3,351,175",149127
-Pennsylvania,0.03,"10,167,376",337557
-Rhode Island,0.04,"854,866",33853
-South Carolina,0.03,"4,037,531",124356
-South Dakota,0.03,"667,558",19359
-Tennessee,0.03,"5,319,123",174467
-Texas,0.03,"21,596,071",660840
-Utah,0.04,"2,274,774",86214
-Vermont,0.04,"509,984",18512
-Virginia,0.04,"6,674,671",247630
-Washington,0.04,"5,951,832",238073
-West Virginia,0.03,"1,432,580",46845
-Wisconsin,0.03,"4,555,837",150343
-Wyoming,0.03,"445,025",13039
+﻿State,US pop using illicit drugs in the last month
+Alabama,94830
+Alaska,18645
+Arizona,199339
+Arkansas,46019
+California,772364
+Colorado,139867
+Connecticut,90895
+Delaware,32462
+D.C.,24974
+Florida,486080
+Georgia,168556
+Hawaii,39749
+Idaho,40678
+Illinois,241096
+Indiana,158458
+Iowa,42523
+Kansas,56122
+Kentucky,120733
+Louisiana,160865
+Maine,28249
+Maryland,173620
+Massachusetts,157986
+Michigan,205862
+Minnesota,85396
+Mississippi,44003
+Missouri,143233
+Montana,22471
+Nebraska,23005
+Nevada,92033
+New Hampshire,29145
+New Jersey,208485
+New Mexico,76923
+New York,302139
+North Carolina,197347
+North Dakota,12677
+Ohio,330519
+Oklahoma,98954
+Oregon,90173
+Pennsylvania,379232
+Rhode Island,25291
+South Carolina,107647
+South Dakota,10614
+Tennessee,190267
+Texas,473958
+Utah,82609
+Vermont,10093
+Virginia,129872
+Washington,157182
+West Virginia,71882
+Wisconsin,109332
+Wyoming,10621
+US Average,6698153

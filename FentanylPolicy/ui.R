@@ -23,8 +23,7 @@ sidebar <- dashboardSidebar(
         id = "sidebar",
         menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
         menuItem("Source Code", icon = icon("file-code-o"), 
-                 href = ),
-        menuItem("Original Spreadsheet", icon = icon("google-drive"), href=),
+                 href = "https://github.com/ASavinkina/Fentanyl-Policy"),
         menuItem("References", tabName = "references", icon = icon("book"))
     )
 )
@@ -105,8 +104,8 @@ body <- dashboardBody(
                                    choices= c(paste(as.character(state.name)),"US Average"), selected="Colorado") ,
                        
                        selectInput("atRisk", ("How much fentanyl is a felony?"), 
-                                   choices = list("Greater than 4g" = 1, "Greater than 1g" = 2,
-                                                  "Any amount" = 3), selected = 1),
+                                   choices = list("Greater than 4g" = "1", "Greater than 1g" = "2",
+                                                  "Any amount" = "3"), selected = "1"),
                        
                        selectInput("timeframe", ("Length of simulation?"),
                                    choices = list("One year" = 1, "Five years" = 5,
@@ -114,11 +113,8 @@ body <- dashboardBody(
                        
                        sliderInput("propFentanyl", 
                                    ("Proportion of the illicit drug supply that contains fentanyl"), 
-                                   min=0, max=1, value=0.8),
-                       
-                       sliderInput("PropIncid", 
-                                   ("Proportion of the overall population who uses illicit drugs that knowingly possess fentanyl"), 
                                    min=0, max=1, value=0.5),
+                       
                        
                        selectInput("Arrests", 
                                    ("Policing strategy"), 
@@ -136,33 +132,73 @@ body <- dashboardBody(
             
         column(width = 8,
                fluidRow(box(textOutput("StateText"), 
-                            #width=8,
+                            width=10,
                             background="navy")),
 
 
-                   fluidRow(valueBoxOutput("Deaths1"),
-                   valueBoxOutput("Death2")),
+                   fluidRow(valueBoxOutput("Overdoses", width=5),
+                   valueBoxOutput("Mortality", width=5)),
 
 
-                   fluidRow(valueBoxOutput("Arrests1"),
-                   valueBoxOutput("Arrest2")),
+                   fluidRow(valueBoxOutput("Arrests1", width=5),
+                   valueBoxOutput("IncarcerationKnown", width=5)),
 
 
-                   fluidRow(valueBoxOutput("Costs2"),
-                            valueBoxOutput("Costs3")),
+                   fluidRow(
+                       valueBoxOutput("Costs2", width=5),
+                            valueBoxOutput("Loss", width=5)),
 
-                   fluidRow(valueBoxOutput("TotalCosts")),
+                   fluidRow(valueBoxOutput("TotalCosts", width=10)),
 
 
                fluidRow(plotlyOutput("I_plot"))
-        )
-    )
+        )),
+    
         # ,
         ## References ----------------------------------------------------------
-        # tabItem(
-        #     tabName = "references"
-        # )
-    )
+          tabItem(
+              tabName = "references",
+              h2("Sources"),
+              p(strong("Population in model:"),"The model was populated according to estimates
+                of people with OUD in each state and the US as a whole, as estimated by Krawczyk et al. 2022 
+                with data from the National Survey on Drug Use and Health. See:", 
+                a("Krawczyk et al. 2022",
+                  href = "https://www.sciencedirect.com/science/article/pii/S0955395922002031?via%3Dihub")),
+              p(strong("Percent of people with OUD who unknowingly possess fentanyl:"),
+                "Estimated at 60% based on literature sources. See:", 
+                a("Macmadu et al. 2017",
+                  href = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5291510/"),
+                a("Carroll et al. 2017",
+                href = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5560423/")),
+              p(strong("Amount of drug in possession:"),
+                    "The proportion of the population that possess >4 grams of drugs, between 1 and 4 grams,
+                    and below 1 gram. Based on drug arrest data from 2004, 2008, and 2012. See:", 
+                a("Kennedy et al. 2018.",
+                  href = "https://lawreview.law.ucdavis.edu/issues/52/2/Articles/52-2_Kennedy.pdf")),
+              p(strong("Annual overdose probability:"),"Estimated at around 0.8% annually, based on data from 
+                CDC on number of overdoses annually and NSDUH for number of people with OUD in the US. See ", 
+                a("CDC SARS-CoV-2 Diagnostic, Screening, and Surveillance Testing.",
+                  href = "https://www.cdc.gov/nchs/pressroom/nchs_press_releases/2021/20211117.htm")),
+              p(strong("Overdose multiplier following incarceration:"),"For first month post-release: 40x.
+                For the next 11 months: 10x. Then back to baseline. Based on literature estimates. See:",
+                a("Ranapurwala et al. 2018",
+                  href ="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6085027/")),
+            p(strong("Annual arrest probability:"),"Estimated at 13% based on arrest numbers for possession
+              and population with drug use in the US. See:",
+                a("PEW Charitable Trusts",
+                    href = " https://www.pewtrusts.org/-/media/assets/2022/02/drug-arrests-stayed-high-even-as-imprisonment-fell-from-2009-to-2019.pdf")),
+            p(strong("Multiplier on subsequent arrests:"),"2.43x, based on literature estimates. See:",
+                a("Belenko et al. 2013",
+                 href = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3859122/")),
+             p(strong("Cost of incarceration, by state:"),"Estimated from Vera research on prison spending. See:",
+                a("Vera, Prison Spending in 2015",
+                    href = "https://www.vera.org/publications/price-of-prisons-2015-state-spending-trends/price-of-prisons-2015-state-spending-trends/price-of-prisons-2015-state-spending-trends-prison-spending")),
+             p(strong("Cost of an overdose death:"),"Estimated from literature sources. Healthcare only: $5,500,
+               lost productivity: $1.4 million, value of a statistical life: $10 million. See:",
+                a("Florence et al. 2021",
+                    href = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8091480/")))
+          
+     )
 )
 
 

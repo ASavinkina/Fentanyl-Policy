@@ -15,7 +15,8 @@ regular_color <- "navy"
 
 shinyServer(function(input, output) {
   
-  output$I_plot <- renderPlot({
+output$I_plot <- renderPlot({
+
     
     library(shiny)
     library(shinydashboard)
@@ -25,7 +26,9 @@ shinyServer(function(input, output) {
     library(tidyverse)
     library(kableExtra)
     library(priceR)
-    
+  
+# Reactive code
+  
     # Alexandra Savinkina
     # 6/7/22
     
@@ -33,48 +36,46 @@ shinyServer(function(input, output) {
     
     atRisk <- input$atRisk
     
-    Prop_Incid <- 1-input$PropIncid 
-    Prop_Reg <- input$PropIncid 
+    Prop_Incid <- 0.6 
+    Prop_Reg <- 0.4
     
-    PropHighIncid <- 0.03
-    PropMedIncid <- 0.54
-    PropLowIncid <- 0.43
+    PropHighIncid <- 0.17
+    PropMedIncid <- 0.18
+    PropLowIncid <- 0.65
     
-    PropHighReg <- 0.36
-    PropMedReg <- 0.43
-    PropLowReg <- 0.21
+    PropHighReg <- 0.17
+    PropMedReg <- 0.18
+    PropLowReg <- 0.65
     
     PropFentanyl <- input$propFentanyl
     
     
-    Prop_AtRisk_Incid <- ifelse(atRisk==1, Prop_Incid*PropHighIncid,
-                                ifelse(atRisk==2, Prop_Incid*(PropHighIncid+PropMedIncid),
-                                       ifelse(atRisk==3, Prop_Incid,0)))
-    Prop_AtRisk_Reg <- ifelse(atRisk==1, Prop_Reg*PropHighReg,
-                              ifelse(atRisk==2, Prop_Reg*(PropHighReg+PropMedReg),
-                                     ifelse(atRisk==3, Prop_Reg,0)))
+    Prop_AtRisk_Incid <- ifelse(atRisk=="1", Prop_Incid*PropHighIncid,
+                                ifelse(atRisk=="2", Prop_Incid*(PropHighIncid+PropMedIncid),
+                                       ifelse(atRisk=="3", Prop_Incid,0)))
+    Prop_AtRisk_Reg <- ifelse(atRisk=="1", Prop_Reg*PropHighReg,
+                              ifelse(atRisk=="2", Prop_Reg*(PropHighReg+PropMedReg),
+                                     ifelse(atRisk=="3", Prop_Reg,0)))
     
     
     
-    Death_Rate_Incid <- 0.000703391#0.0029/12 #assuming 15% fatal overdose # 0.0019 assuming 10% fatal overdose 
-    Death_Rate_Reg <- 0.000703391#0.0029/12 #assuming 15% fatal overdose # 0.0019 assuming 10% fatal overdose
+    Death_Rate_Incid <- 0.000703391
+    Death_Rate_Reg <- 0.00070339
     
     Death_Rate_Jail <- 0.00001/12
     
-    Arrest_Rate_Incid <- as.numeric(input$Arrests)/12
-    Arrest_Rate_Reg <- Arrest_Rate_Incid
+    Jail_Rate_Incid <- as.numeric(input$Arrests)/12
+    Jail_Rate_Reg <- as.numeric(input$Arrests)/12
     
     Arrest_text1 <- ifelse(input$Arrests==0.13, "Standard policing",
                            ifelse(input$Arrests==0.05, "Treatment-informed Policing", "Aggressive Policing"))
     
     Arrest_text2 <- ifelse(input$Arrests==0.13, "13%",
                            ifelse(input$Arrests==0.05, "5%", "20%"))
+
     
-    Charge_Rate_Incid <- 1
-    Charge_Rate_Reg <- 1
-    
-    Jail_Rate_Incid <- Arrest_Rate_Incid*Charge_Rate_Incid
-    Jail_Rate_Reg <- Arrest_Rate_Reg*Charge_Rate_Reg
+ #   Jail_Rate_Incid <- Arrest_Rate_Incid()
+#   Jail_Rate_Reg <- Arrest_Rate_Reg()
     
     Arrest_Mult_Arrest <- 2.43
     Arrest_Mult_Death1 <- 40
@@ -83,7 +84,7 @@ shinyServer(function(input, output) {
     
     state_cost <- read.csv(file='prisoncosts_state.csv')
     state_cost <- state_cost[,c(1,5)]
-    
+  
     Cost_Jail <- as.numeric(state_cost[which(state_cost$State==input$costarrest),2])
     
     Cost_Death <- ifelse(input$costdeath == "Value of a statistical life",  10099517 ,
@@ -92,9 +93,9 @@ shinyServer(function(input, output) {
     
     drug_use_pop_state <- read.csv(file="drugusestate.csv")
     
-    N_pop1 <- (as.numeric(drug_use_pop_state[which(drug_use_pop_state$State==input$costarrest),4]))
+    N_pop1 <- as.numeric(drug_use_pop_state[which(drug_use_pop_state$State==input$costarrest),2])
     
-    N_pop <- (as.numeric(drug_use_pop_state[which(drug_use_pop_state$State==input$costarrest),4]))*PropFentanyl
+    N_pop <- as.numeric(drug_use_pop_state[which(drug_use_pop_state$State==input$costarrest),2])*PropFentanyl
     
     # Model parameters
     
@@ -160,9 +161,9 @@ shinyServer(function(input, output) {
       
     }
     
-    
+    Data_People1 <- Data
     Data_People <- Data*N_pop
-    Data_People$month <- trunc(Data_People$month/N_pop)
+    Data_People$month <- Data_People1$month
     
     Data_People$ChargeCost <- Data_People$Arrested_incid*Cost_Jail+Data_People$Arrested_reg*Cost_Jail
     Data_People$DeathCost <- Data_People$Dead_incid*Cost_Death+Data_People$Dead_reg*Cost_Death
@@ -196,7 +197,7 @@ shinyServer(function(input, output) {
     
     Costs_death <-trunc(Data_People[Data_People$month==time,'DeathCost'])
     
-    Costs_arrest <- trunc(Data_People[Data_People$month==time,'ChargeCostCum'])
+    Price_arrest <- trunc(Data_People[Data_People$month==time,'ChargeCostCum'])
     
    # Costs_total <- format_dollars(Costs_arrest+Costs_death)
     
@@ -204,21 +205,21 @@ shinyServer(function(input, output) {
     
    # Costs_death <- format_dollars(Costs_death)
     
-    
+  
     output$StateText<- renderText({ 
-      paste("The population that reported illicit drug use (non-marijuana) in ", input$costarrest,  " is",
+      paste("Estimated population with opioid use disorder in ", input$costarrest,  " is",
             prettyNum(N_pop1, big.mark = ","), ", the average cost of a month in prison in ", input$costarrest, "is ", format_dollars(Cost_Jail), ".",
             Arrest_text1, "leads to an annual arrest rate of", Arrest_text2)
     })
     
     
-    output$Deaths1 <- renderValueBox({
+    output$Overdoses<- renderValueBox({
       valueBox(prettyNum((trunc(Data_People[Data_People$month==time,'Dead_incid'])), big.mark = ","), "Deaths in population with unknown fentanyl possession",
                #icon = icon("skull"),
                color = "red")
     })
 
-    output$Death2 <- renderValueBox({
+    output$Mortality <- renderValueBox({
       valueBox(prettyNum((trunc(Data_People[Data_People$month==time,'Dead_reg'])), big.mark = ","), "Deaths in population with known fentanyl possession",
                #icon = icon("skull"),
                color = "red")
@@ -227,42 +228,42 @@ shinyServer(function(input, output) {
     output$Arrests1 <- renderValueBox({
       valueBox(prettyNum((trunc(Data_People[Data_People$month==time,'Arrested_incid']) + 
                             trunc(Data_People[Data_People$month==time,'Released_immediate_incid'])+ 
-                            trunc(Data_People[Data_People$month==time,'Released_post1yr_incid'])), big.mark = ","), "Arrests in population with unknown fentanyl possession",
+                            trunc(Data_People[Data_People$month==time,'Released_post1yr_incid'])), big.mark = ","), "Incarcerations in population with unknown fentanyl possession",
                #icon = icon("trailer"),
                color = "orange")
     })
 
-    output$Arrest2 <- renderValueBox({
+    output$IncarcerationKnown <- renderValueBox({
       valueBox(prettyNum(trunc(Data_People[Data_People$month==time,'Arrested_reg']) + 
                             trunc(Data_People[Data_People$month==time,'Released_immediate_reg'])+ 
-                            trunc(Data_People[Data_People$month==time,'Released_post1yr_reg']), big.mark = ","), "Arrests in population with known fentanyl possession",
+                            trunc(Data_People[Data_People$month==time,'Released_post1yr_reg']), big.mark = ","), "Incarcerations in population with known fentanyl possession",
                #icon = icon("trailer"),
                color = "orange")
     })
 
     output$TotalCosts <- renderValueBox({
-      valueBox(format_dollars(Costs_arrest+Costs_death), "Total costs from death and arrest",
-               #icon = icon("dollar"),
+      valueBox(format_dollars(Price_arrest+Costs_death), "Total costs from death and incarceration",
+               icon = icon("dollar"),
                color = "green")
     })
 
     output$Costs2 <- renderValueBox({
       valueBox(format_dollars(Costs_death), "Total costs from death",
-               #icon = icon("dollar"),
+               icon = icon("dollar"),
                color = "green")
     })
 
 
-    output$Costs3 <- renderValueBox({
-      valueBox(format_dollars(Costs_arrest), "Total costs from arrest",
-               #icon = icon("dollar"),
+    output$Loss <- renderValueBox({
+      valueBox(format_dollars(Price_arrest), "Total costs from incarceration",
+               icon = icon("dollar"),
                color = "green")
     })
 
     
     
     
-  })
+   })
 }
 )
 

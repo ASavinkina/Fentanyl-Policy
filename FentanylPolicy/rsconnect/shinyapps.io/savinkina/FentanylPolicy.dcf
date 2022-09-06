@@ -5,10 +5,10 @@ account: savinkina
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6806228
-bundleId: 6253814
+bundleId: 6274784
 url: https://savinkina.shinyapps.io/FentanylPolicy/
-when: 1661910464.9405
-lastSyncTime: 1661910464.94052
+when: 1662489025.60564
+lastSyncTime: 1662489025.60565
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: .RData
